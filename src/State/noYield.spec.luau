@@ -14,7 +14,9 @@ return function()
 			return a + b + c
 		end
 
-		expect(noYeild(add, 1, 2, 3)).to.never.throw()
+		expect(function()
+			noYeild(add, 1, 2, 3)
+		end).to.never.throw()
 		expect(noYeild(add, 1, 2, 3)).to.be.ok()
 		expect(noYeild(add, 1, 2, 3)).to.equal(6)
 	end)

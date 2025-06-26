@@ -61,7 +61,11 @@ function StateObject:SetState(modifer: table | (old: table) -> table)
 		end
 	end
 
+	local oldState = self._state
+
 	self._state = Utils.assign(self._state, modified)
+
+	self.Change:_fireChange(self:GetState())
 end
 
 return State

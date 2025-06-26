@@ -15,6 +15,8 @@ function Change.new()
 	return self
 end
 
+function ChangeMT:_fireTable() end
+
 function ChangeMT:_fireBind(value)
 	if self._hasBoundFired then
 		return
