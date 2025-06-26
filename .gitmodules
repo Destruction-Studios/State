@@ -4,3 +4,6 @@
 [submodule "modules"]
 	path = modules
 	url = https://github.com/Roblox/testez
+[submodule "TestEZ"]
+	path = TestEZ
+	url = https://github.com/Roblox/testez
