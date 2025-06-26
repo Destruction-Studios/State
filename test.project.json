@@ -1,0 +1,24 @@
+{
+  "name": "State",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Test": {
+        "$path":"src/Test",
+        "$properties":{
+          "RunContext": "Client"
+        }
+      },
+      "Shared": {
+       "$className":"Folder",
+
+       "State": {
+        "$path":"src/State"
+       }
+      }
+    }
+
+    
+  }
+}
