@@ -4,21 +4,17 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "Test": {
-        "$path":"src/Test",
-        "$properties":{
-          "RunContext": "Client"
-        }
-      },
-      "Shared": {
-       "$className":"Folder",
-
        "State": {
         "$path":"src/State"
        }
-      }
+    },
+    "ServerScriptService": {
+        "Tests": {
+          "$path":"src/Tests",
+          "TestEZ":{
+            "$path":"TestEZ/src"
+          }
+        }
     }
-
-    
   }
 }
