@@ -1,5 +1,5 @@
 {
-  "name": "network",
+  "name": "state",
   "tree": {
     "$path":"src/State"
   }
