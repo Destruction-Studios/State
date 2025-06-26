@@ -33,4 +33,15 @@ return function()
 			end).to.be.ok()
 		end)
 	end)
+
+	describe("Utils.assign", function()
+		local a = { Money = 2 }
+		local b = { Name = "Bob" }
+		local c = { Money = 5 }
+
+		local new = Utils.assign(a, b, c)
+
+		expect(new.Money).to.equal(c.Money)
+		expect(new.Name).to.equal(b.Name)
+	end)
 end
