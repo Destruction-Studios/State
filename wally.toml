@@ -4,6 +4,8 @@ version = "0.1.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
+exclude = ["src/Tests"]
+
 [dependencies]
 Promise = "evaera/promise@4"
 Trove = "sleitnick/trove@1.5.1"
