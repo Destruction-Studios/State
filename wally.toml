@@ -1,10 +1,10 @@
 [package]
 name = "destruction-studios/state"
-version = "0.1.0"
+version = "0.2.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
-exclude = ["src/Tests"]
+exclude = ["src/Tests", "TestEZ"]
 
 [dependencies]
 Promise = "evaera/promise@4"
