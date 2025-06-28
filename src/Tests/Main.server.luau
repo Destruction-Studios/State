@@ -43,4 +43,8 @@ s:StartState()
 s:RunModifier("AddCoins", 50)
 s:RunModifier("RemoveCoins", s:GetState().Coins - 300)
 
+s:SetState(function(old)
+	task.wait()
+end)
+
 -- s:RunModifier("Error")

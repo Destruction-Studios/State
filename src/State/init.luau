@@ -91,27 +91,27 @@ function StateObject:RunModifier(modifier: string, ...: any)
 	self.Change:_fireModifier(modifier, ..., NO_YIELD_MOD(func, self, ...))
 end
 
-function StateObject:SetState(modifer: table | (old: table) -> table)
+function StateObject:SetState(modifier: table | (old: table) -> table)
 	assert(self._started, NOT_STARTED_MSG)
 	local modified = nil
-	if typeof(modifer) == "table" then
-		modified = modifer
-	elseif typeof(modifer) == "function" then
+	if typeof(modifier) == "table" then
+		modified = modifier
+	elseif typeof(modifier) == "function" then
 		local connection = nil
 		connection = self._changedSignal:Connect(function()
 			warn(self:FormatError(`State Changed while inside :SetState`))
 		end)
-		local success, value = Promise.try(modifer, self:GetState())
+		local success, value = Promise.try(NO_YIELD_MOD, modifier, self:GetState())
 			:catch(function(err)
-				warn(self:FormatError(`State Modifer Errored\n{err}`))
+				warn(self:FormatError(`State Modifier Errored\n{err}`))
 			end)
 			:await()
 		self._changedSignal:Disconnect(connection)
 		connection = nil
 		if success and value ~= nil then
+			Utils.assertType(value, "table")
 			modified = value
 		end
-		Utils.assertType(value, "table")
 	end
 
 	-- local oldState = self._state
