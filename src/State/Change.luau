@@ -73,4 +73,9 @@ function ChangeMT:OnChange(func: ChangeFunc)
 	end
 end
 
+function ChangeMT:Destroy()
+	self._onBind:DisconnectAll()
+	self._onChange:DisconnectAll()
+end
+
 return Change

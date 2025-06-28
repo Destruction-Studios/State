@@ -101,4 +101,10 @@ function StateObject:StartState()
 	self.Change:_fireBind(self:GetState())
 end
 
+function StateObject:Destroy()
+	self.Change:Destroy()
+	setmetatable(self, nil)
+	table.clear(self)
+end
+
 return State

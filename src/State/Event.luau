@@ -48,4 +48,6 @@ function Event:Fire(...)
 	end
 end
 
+function Event:DisconnectAll() end
+
 return Event
