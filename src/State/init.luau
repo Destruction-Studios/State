@@ -35,13 +35,13 @@ local State = {
 local StateObject = {}
 StateObject.__index = StateObject
 
-function State.new(defaultValue, traceback): StateObject
+function State.new(defaultValue): StateObject
 	Utils.assertType(defaultValue, "table")
 
 	local self = setmetatable({}, StateObject)
 
 	self._state = Utils.copyTable(defaultValue)
-	self._traceback = traceback
+	self._traceback = debug.traceback()
 	self._changedSignal = Signal.new()
 
 	self.Change = Change.new()
@@ -107,4 +107,4 @@ function StateObject:Destroy()
 	table.clear(self)
 end
 
-return State
+return State :: State
