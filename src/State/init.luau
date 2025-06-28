@@ -1,5 +1,5 @@
 local Utils = require(script.Utils)
-local Signal = require(script.Parent.Signal)
+local Event = require(script.Event)
 local Promise = require(script.Parent.Promise)
 
 local NOT_STARTED_MSG = "[State] State has not been started"
@@ -42,7 +42,7 @@ function State.new(defaultValue): StateObject
 
 	self._state = Utils.copyTable(defaultValue)
 	self._traceback = debug.traceback()
-	self._changedSignal = Signal.new()
+	self._changedSignal = Event.new()
 
 	self.Change = Change.new()
 
@@ -78,7 +78,7 @@ function StateObject:SetState(modifer: table | (old: table) -> table)
 				warn(self:FormatError(`State Modifer Errored\n{err}`))
 			end)
 			:await()
-		connection:Disconnect()
+		self._changedSignal:Disconnect(connection)
 		connection = nil
 		Utils.assertType(value, "table")
 		if success and value ~= nil then
