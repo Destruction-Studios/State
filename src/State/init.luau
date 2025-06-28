@@ -2,6 +2,8 @@ local Utils = require(script.Utils)
 local Signal = require(script.Parent.Signal)
 local Promise = require(script.Parent.Promise)
 
+local NOT_STARTED_MSG = "[State] State has not been started"
+
 local Nil = require(script.Nil)
 local Change = require(script.Change)
 
@@ -40,6 +42,7 @@ function StateObject:GetState()
 end
 
 function StateObject:SetState(modifer: table | (old: table) -> table)
+	assert(self._started, NOT_STARTED_MSG)
 	local modified = nil
 	if typeof(modifer) == "table" then
 		modified = modifer
@@ -61,11 +64,19 @@ function StateObject:SetState(modifer: table | (old: table) -> table)
 		end
 	end
 
-	local oldState = self._state
+	-- local oldState = self._state
 
 	self._state = Utils.assign(self._state, modified)
 
 	self.Change:_fireChange(self:GetState())
+end
+
+function StateObject:StartState()
+	assert(not self._started, `[State] State has already been started`)
+
+	self._started = true
+
+	self.Change:_fireBind(self:GetState())
 end
 
 return State

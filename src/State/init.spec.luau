@@ -10,6 +10,8 @@ return function()
 
 	local state = State.new(default)
 
+	state:StartState()
+
 	describe("State.new", function()
 		it("should error if not table", function()
 			expect(function()

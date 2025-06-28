@@ -18,7 +18,7 @@ end
 
 function Utils.assertType(value, expected)
 	if typeof(value) ~= expected then
-		error(`Expected '{expected}' got {typeof(value)}`, 2)
+		error(`[State] Expected '{expected}' got {typeof(value)}`, 2)
 	end
 end
 
