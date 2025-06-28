@@ -1,3 +1,4 @@
+--#selene:allow(unused_variable)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local State = require(ReplicatedStorage.State)
 -- if true then
@@ -8,9 +9,9 @@ local s = State.new({
 	Coins = 100,
 })
 
-local stop = s.Change:OnBind(function(state)
-	print("BOUND with ", state)
-end, false)
+local stop = s.Change:OnBind(function(...)
+	print("BOUND with ", ...)
+end, true)
 
 local stopChange = s.Change:OnChange(function(new, old)
 	print("NEW ", new, "OLD ", old)

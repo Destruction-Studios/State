@@ -38,6 +38,7 @@ function ChangeMT:OnBind(func: ChangeFunc, connectToChange: boolean)
 	Utils.assertType(func, "function")
 	Utils.assertType(connectToChange, "boolean")
 	local connection = nil
+	local changeConnection = nil
 
 	if self._hasBoundFired then
 		func(self._lastValue, nil)
@@ -45,10 +46,17 @@ function ChangeMT:OnBind(func: ChangeFunc, connectToChange: boolean)
 		connection = self._onBind:Connect(func)
 	end
 
+	changeConnection = self._onChange:Connect(func)
+
 	return function()
 		assert(connection, CONN_DISCONNECT_MSG)
 		self._onBind:Disconnect(connection)
 		connection = nil
+
+		if changeConnection then
+			self._onChange:Disconnect(changeConnection)
+			changeConnection = nil
+		end
 	end
 end
 
