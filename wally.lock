@@ -5,7 +5,7 @@ registry = "test"
 [[package]]
 name = "desruction-studios/state"
 version = "0.1.0"
-dependencies = [["Promise", "evaera/promise@4.0.0"], ["Signal", "sleitnick/signal@2.0.3"], ["Trove", "sleitnick/trove@1.5.1"], ["UniqueKey", "destruction-studios/uniquekey@1.0.4"]]
+dependencies = [["Promise", "evaera/promise@4.0.0"], ["UniqueKey", "destruction-studios/uniquekey@1.0.4"]]
 
 [[package]]
 name = "destruction-studios/uniquekey"
@@ -15,14 +15,4 @@ dependencies = []
 [[package]]
 name = "evaera/promise"
 version = "4.0.0"
-dependencies = []
-
-[[package]]
-name = "sleitnick/signal"
-version = "2.0.3"
-dependencies = []
-
-[[package]]
-name = "sleitnick/trove"
-version = "1.5.1"
 dependencies = []

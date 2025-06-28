@@ -8,6 +8,4 @@ exclude = ["src/Tests"]
 
 [dependencies]
 Promise = "evaera/promise@4"
-Trove = "sleitnick/trove@1.5.1"
-Signal = "sleitnick/signal@2.0.3"
 UniqueKey = "destruction-studios/uniquekey@1.0.4"
