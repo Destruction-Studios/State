@@ -1,5 +1,5 @@
 [package]
-name = "desruction-studios/state"
+name = "destruction-studios/state"
 version = "0.1.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
