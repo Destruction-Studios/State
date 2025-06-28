@@ -9,28 +9,38 @@ local s = State.new({
 	Coins = 100,
 })
 
-local stop = s.Change:OnBind(function(...)
-	print("BOUND with ", ...)
-end, true)
+s:SetModifierTable({
+	AddCoins = function(state, amount)
+		local new = 0
+		state:SetState(function(old)
+			new = old.Coins + amount
+			old.Coins = new
+			return old
+		end)
+		return new
+	end,
+	RemoveCoins = function(state, amount)
+		local new = 0
+		state:SetState(function(old)
+			new = math.max(old.Coins - amount, 0)
+			old.Coins = new
+			return old
+		end)
+		return new
+	end,
+})
 
-local stopChange = s.Change:OnChange(function(new, old)
-	print("NEW ", new, "OLD ", old)
+s.Change:OnModifier("AddCoins", function(amount, newBalance)
+	print(`Add {amount}: {newBalance}`)
 end)
 
-local stopChange2 = s.Change:OnChange(function()
-	warn("change")
+s.Change:OnModifier("RemoveCoins", function(amountToRemove, newBalance)
+	print(`Remove {amountToRemove}: {newBalance}`)
 end)
-
--- stop()
 
 s:StartState()
 
-s:SetState({
-	Enabled = true,
-})
+s:RunModifier("AddCoins", 50)
+s:RunModifier("RemoveCoins", s:GetState().Coins - 300)
 
-stopChange2()
-
-s:SetState({
-	Coins = 10000,
-})
+-- s:RunModifier("Error")

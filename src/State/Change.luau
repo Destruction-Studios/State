@@ -16,8 +16,13 @@ function Change.new()
 	self._lastValue = nil
 	self._onChange = Event.new()
 	self._onBind = Event.new()
+	self._onModifier = Event.new()
 
 	return self
+end
+
+function ChangeMT:_fireModifier(modifierName, ...)
+	self._onModifier:Fire(modifierName, ...)
 end
 
 function ChangeMT:_fireBind(value)
@@ -69,6 +74,22 @@ function ChangeMT:OnChange(func: ChangeFunc)
 	return function()
 		assert(connection, CONN_DISCONNECT_MSG)
 		self._onChange:Disconnect(connection)
+		connection = nil
+	end
+end
+
+function ChangeMT:OnModifier(modifierName: string, func)
+	local connection = nil
+
+	connection = self._onModifier:Connect(function(modifier, ...)
+		if modifier == modifierName then
+			func(...)
+		end
+	end)
+
+	return function()
+		assert(connection, CONN_DISCONNECT_MSG)
+		self._onModifier:Disconnect(connection)
 		connection = nil
 	end
 end

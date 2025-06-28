@@ -3,7 +3,7 @@
     https://github.com/Roblox/rodux/blob/master/src/NoYield.lua
 ]]
 
-local function handler(thread: thread, success: boolean, ...: any)
+local function handler(errMsg: string, thread: thread, success: boolean, ...: any)
 	if not success then
 		local err = (...)
 		if typeof(err) == "string" then
@@ -14,16 +14,19 @@ local function handler(thread: thread, success: boolean, ...: any)
 	end
 
 	if coroutine.status(thread) ~= "dead" then
-		error(debug.traceback(thread, "Attempted to yeild"), 2)
+		error(debug.traceback(thread, errMsg), 2)
 	end
 
 	return ...
 end
 
-local function noYeild(callback, ...: any)
-	local thread = coroutine.create(callback)
+local function noYeild(errMsg: string)
+	errMsg = errMsg or "Attempted to yeild"
+	return function(callback: () -> any, ...: any)
+		local thread = coroutine.create(callback)
 
-	return handler(thread, coroutine.resume(thread, ...))
+		return handler(errMsg, thread, coroutine.resume(thread, ...))
+	end
 end
 
 return noYeild

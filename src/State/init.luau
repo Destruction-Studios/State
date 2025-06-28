@@ -1,13 +1,23 @@
 local Utils = require(script.Utils)
 local Event = require(script.Event)
 local Promise = require(script.Parent.Promise)
+local noYield = require(script.noYield)
 
+local NO_YIELD_MOD = noYield("[State] attempted to yield in modifier function")
+
+local INVALID_MODIFIER_MSG = "[State] %s is not a valid modifier"
+local NO_MODIFIERS_MSG = "[State] State does not have modifiers"
+local STARTED_MSG = "[State] State has already been started"
 local NOT_STARTED_MSG = "[State] State has not been started"
 
 local Nil = require(script.Nil)
 local Change = require(script.Change)
 
 export type UniqueKey = any
+
+export type ModifierTable = {
+	[any]: (state: StateObject, ...any) -> ...any,
+}
 
 export type Change = {
 	OnBind: (self: Change, func: (new: table, old: table) -> nil, shouldConnectToChange: boolean) -> () -> nil,
@@ -21,6 +31,8 @@ export type StateObject = {
 	GetState: (self: StateObject) -> any,
 	SetState: (self: StateObject, modifer: table | (state: table) -> table) -> nil,
 	StartState: (self: StateObject) -> nil,
+	SetModifierTable: (self: StateObject, modifierTable: ModifierTable) -> nil,
+	RunModifier: (self: StateObject, modifier: string, ...any) -> nil,
 	Destroy: (self: StateObject) -> nil,
 }
 
@@ -43,6 +55,7 @@ function State.new(defaultValue): StateObject
 	self._state = Utils.copyTable(defaultValue)
 	self._traceback = debug.traceback()
 	self._changedSignal = Event.new()
+	self._modifierTable = nil
 
 	self.Change = Change.new()
 
@@ -59,8 +72,23 @@ function StateObject:_getTraceback()
 	return self._traceback
 end
 
+function StateObject:SetModifierTable(modiferTable: ModifierTable)
+	assert(not self._started, STARTED_MSG)
+	self._modifierTable = modiferTable
+end
+
 function StateObject:GetState()
 	return Utils.copyTable(self._state)
+end
+
+function StateObject:RunModifier(modifier: string, ...: any)
+	assert(self._modifierTable, NO_MODIFIERS_MSG)
+
+	local func = self._modifierTable[modifier]
+
+	assert(func, INVALID_MODIFIER_MSG:format(modifier))
+
+	self.Change:_fireModifier(modifier, ..., NO_YIELD_MOD(func, self, ...))
 end
 
 function StateObject:SetState(modifer: table | (old: table) -> table)
@@ -80,10 +108,10 @@ function StateObject:SetState(modifer: table | (old: table) -> table)
 			:await()
 		self._changedSignal:Disconnect(connection)
 		connection = nil
-		Utils.assertType(value, "table")
 		if success and value ~= nil then
 			modified = value
 		end
+		Utils.assertType(value, "table")
 	end
 
 	-- local oldState = self._state
@@ -94,7 +122,7 @@ function StateObject:SetState(modifer: table | (old: table) -> table)
 end
 
 function StateObject:StartState()
-	assert(not self._started, `[State] State has already been started`)
+	assert(not self._started, STARTED_MSG)
 
 	self._started = true
 
