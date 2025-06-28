@@ -7,13 +7,35 @@ local NOT_STARTED_MSG = "[State] State has not been started"
 local Nil = require(script.Nil)
 local Change = require(script.Change)
 
+export type UniqueKey = any
+
+export type Change = {
+	OnBind: (self: Change, func: (new: table, old: table) -> nil, shouldConnectToChange: boolean) -> () -> nil,
+	OnChange: (self: Change, func: (new: table, old: table) -> nil) -> nil,
+}
+
+export type StateObject = {
+	Change: Change,
+
+	FormatError: (self: StateObject, err: string) -> string,
+	GetState: (self: StateObject) -> any,
+	SetState: (self: StateObject, modifer: table | (state: table) -> table) -> nil,
+	StartState: (self: StateObject) -> nil,
+	Destroy: (self: StateObject) -> nil,
+}
+
+export type State = {
+	Nil: UniqueKey,
+	new: (state: table) -> StateObject,
+}
+
 local State = {
 	Nil = Nil,
-}
+} :: State
 local StateObject = {}
 StateObject.__index = StateObject
 
-function State.new(defaultValue, traceback)
+function State.new(defaultValue, traceback): StateObject
 	Utils.assertType(defaultValue, "table")
 
 	local self = setmetatable({}, StateObject)
@@ -28,7 +50,7 @@ function State.new(defaultValue, traceback)
 end
 
 function StateObject:FormatError(message)
-	return `\n\n[StateError] {message}\n\nstate created at\n{self:_getTraceback()}\n\n`
+	return `\n\n[State] {message}\n\nstate created at\n{self:_getTraceback()}\n\n`
 end
 
 function StateObject:_runStateChanged() end
