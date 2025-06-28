@@ -2,6 +2,7 @@ local Utils = require(script.Utils)
 local Event = require(script.Event)
 local Promise = require(script.Parent.Promise)
 local noYield = require(script.noYield)
+local Loggers = require(script.Loggers)
 
 local NO_YIELD_MOD = noYield("[State] attempted to yield in modifier function")
 
@@ -26,6 +27,7 @@ export type Change = {
 
 export type StateObject = {
 	Change: Change,
+	Loggers: typeof(Loggers),
 
 	FormatError: (self: StateObject, err: string) -> string,
 	GetState: (self: StateObject) -> any,
@@ -42,12 +44,13 @@ export type State = {
 }
 
 local State = {
+	Loggers = Loggers,
 	Nil = Nil,
 } :: State
 local StateObject = {}
 StateObject.__index = StateObject
 
-function State.new(defaultValue): StateObject
+function State.new(defaultValue, logger: table?): StateObject
 	Utils.assertType(defaultValue, "table")
 
 	local self = setmetatable({}, StateObject)
@@ -56,6 +59,7 @@ function State.new(defaultValue): StateObject
 	self._traceback = debug.traceback()
 	self._changedSignal = Event.new()
 	self._modifierTable = nil
+	self._logger = logger
 
 	self.Change = Change.new()
 
@@ -124,12 +128,24 @@ end
 function StateObject:StartState()
 	assert(not self._started, STARTED_MSG)
 
+	if self._logger then
+		self._loggerCleanup = self._logger(self)
+	end
+
 	self._started = true
 
 	self.Change:_fireBind(self:GetState())
 end
 
 function StateObject:Destroy()
+	if self._logger then
+		if self._loggerCleanup then
+			self._loggerCleanup()
+		else
+			warn(`[State] Logger has no cleanup`)
+		end
+	end
+
 	self.Change:Destroy()
 	setmetatable(self, nil)
 	table.clear(self)

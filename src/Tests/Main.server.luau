@@ -7,7 +7,7 @@ local State = require(ReplicatedStorage.State)
 local s = State.new({
 	Enabled = false,
 	Coins = 100,
-})
+}, State.Loggers.defaultLogger)
 
 s:SetModifierTable({
 	AddCoins = function(state, amount)
